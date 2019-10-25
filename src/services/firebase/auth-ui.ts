@@ -1,5 +1,6 @@
 import { autoinject } from 'aurelia-framework'
-import { auth } from 'firebase'
+import * as firebase from 'firebase/app'
+import 'firebase/auth'
 
 enum SignInFlow {
   POPUP = 'popup',
@@ -17,7 +18,7 @@ export class AuthUiService {
     },
     signInFlow: SignInFlow.POPUP,
     signInSuccessUrl: '/',
-    signInOptions: [auth.GoogleAuthProvider.PROVIDER_ID],
+    signInOptions: [firebase.auth.GoogleAuthProvider.PROVIDER_ID],
   }
 
   constructor(private ui: firebaseui.auth.AuthUI) {}
