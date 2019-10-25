@@ -10,6 +10,7 @@
   "dependencies": {
     "aurelia-animator-css": "^1.0.4",
     "aurelia-bootstrapper": "^2.3.2",
+    "date-fns": "^2.6.0",
     "firebase": "^7.2.2",
     "firebaseui": "^4.2.0"
   },
@@ -78,7 +79,8 @@
     "build": "webpack --env.production --extractCss",
     "start": "webpack-dev-server --extractCss",
     "build:dev": "webpack --extractCss",
-    "deploy": "au build --env prod && firebase deploy --only hosting",
+    "deploy": "webpack --env.production --extractCss && firebase deploy --only hosting",
+    "deploy:rules": "firebase deploy --only firestore:rules",
     "analyze": "webpack --env.production --analyze",
     "test": "au test",
     "e2e": "au cypress",
