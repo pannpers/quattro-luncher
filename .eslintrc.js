@@ -41,6 +41,7 @@ module.exports = {
     'no-unused-expressions': 'warn',
     'no-param-reassign': 'warn',
     'no-empty-function': 'off',
+    'no-plusplus': 'off',
     'class-methods-use-this': 'off',
     'import/no-extraneous-dependencies': 'off',
     'import/prefer-default-export': 'off',
