@@ -1,8 +1,15 @@
+import { Party } from './party'
+
 export class Lunch {
   constructor(
-    private id: string,
-    private backNumber: number,
-    private lunchDate: Date,
-    private skipUserIds: number[],
+    public id: string,
+    public backNumber: number,
+    public lunchDate: Date,
+    public parties: Party[] = [],
+    public skipUserIds: number[],
   ) {}
+
+  public hasPartyFixed(): boolean {
+    return this.parties.length >= 1
+  }
 }

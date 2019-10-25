@@ -8,5 +8,13 @@ service cloud.firestore {
     match /lunches/{lunch} {
       allow read, write: if signedIn();
     }
+
+    match /lunches/{lunch}/parties/{party} {
+      allow read, write: if signedIn();
+    }
+
+    match /users/{user} {
+      allow read: if signedIn();
+    }
   }
 }
