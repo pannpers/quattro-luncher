@@ -1,4 +1,14 @@
 {
   "debug": true,
-  "testing": true
+  "testing": true,
+  "firebaseConfig": {
+    "apiKey": "AIzaSyDiDYFnOQh_ZeTIiH-DDwb8-ivYoGrsD6s",
+    "authDomain": "zeals-quattro-lunch.firebaseapp.com",
+    "databaseURL": "https://zeals-quattro-lunch.firebaseio.com",
+    "projectId": "zeals-quattro-lunch",
+    "storageBucket": "zeals-quattro-lunch.appspot.com",
+    "messagingSenderId": "400260405933",
+    "appId": "1:400260405933:web:9b583de9af2b1ac8740424",
+    "measurementId": "G-64HY3R1Y62"
+  }
 }

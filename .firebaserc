@@ -1,6 +1,5 @@
 {
   "projects": {
-    "default": "scaffold-aurelia-firebase-pwa",
-    "prod": "scaffold-aurelia-firebase-pwa"
+    "default": "zeals-quattro-lunch"
   }
 }
