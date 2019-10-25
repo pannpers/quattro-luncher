@@ -12,6 +12,10 @@
 
 > Quattro Luncher makes Zeals Quattro Lunch happy and improve user experience.
 
+
+<img src="static/img/quattro-lunch-hero.jpg">
+
+
 ### 🏠 [Homepage](zeals-quattro-lunch.web.app)
 
 ### ✨ [Demo](zeals-quattro-lunch.web.app)
