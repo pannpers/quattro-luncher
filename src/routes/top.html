@@ -1,4 +1,6 @@
 <template>
+  <require from="../resources/value-converters/format"></require>
+
   <article id="top">
     <header>
       <h1>Welcome to Aurelia Scaffold App</h1>
@@ -7,5 +9,36 @@
     <button click.delegate="signOut()">
       Sign Out
     </button>
+
+    <section if.bind="lunch.hasPartyFixed()">
+      Latest Lunch Date: ${lunch.lunchDate | format}
+      <ul>
+        <li repeat.for="party of lunch.parties">
+          Party ID: ${party.id}
+        </li>
+      </ul>
+    </section>
+
+    <section else>
+      Let's Generate a New Party!!
+
+      <button type="button" click.delegate="generateParties()">Generate</button>
+
+      <ul>
+        <li repeat.for="party of tmpParties">
+          Party ID: ${party.id}
+          <p>
+            Leader: ${party.leader.displayName}
+            <ul>
+              <li repeat.for="user of party.users">
+                Member ${index}: ${user.displayName}
+              </li>
+            </ul>
+          </p>
+        </li>
+      </ul>
+
+      <button type="button" click.delegate="saveParty()" if.bind="tmpParties.length > 0">Fix!!</button>
+    </section>
   </article>
 </template>
