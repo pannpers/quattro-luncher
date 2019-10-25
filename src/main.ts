@@ -1,8 +1,8 @@
 import { Aurelia, PLATFORM } from 'aurelia-framework'
 import { Router } from 'aurelia-router'
-import environment from 'environment'
 import { registerDependencies } from 'register'
 import { AuthService } from 'services/firebase/auth'
+import * as environment from '../config/environment.json'
 
 export function configure(aurelia: Aurelia): void {
   aurelia.use.standardConfiguration().feature(PLATFORM.moduleName('resources/index'))

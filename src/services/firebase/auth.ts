@@ -8,4 +8,8 @@ export class AuthService {
   public isSignedIn = false
 
   constructor(public auth: firebase.auth.Auth) {}
+
+  public signOut(): void {
+    this.auth.signOut()
+  }
 }
