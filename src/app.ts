@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 /* eslint-disable prettier/prettier */
 import { autoinject, PLATFORM } from 'aurelia-framework'
 import { AuthService } from 'services/firebase/auth'

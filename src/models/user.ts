@@ -1,8 +1,5 @@
+import { SlackUser } from './slack-user'
+
 export class User {
-  constructor(
-    public id: string,
-    public slackId: string,
-    public displayName: string,
-    public isActive: boolean,
-  ) {}
+  constructor(public id: string, public slackUser: SlackUser, public isActive: boolean) {}
 }
