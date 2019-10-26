@@ -42,6 +42,17 @@ npm run start
 npm run test
 ```
 
+## Appendix
+### Register Environment Variables for Cloud Functions
+> https://firebase.google.com/docs/functions/config-env?authuser=0
+
+To register [Slack OAuth Access Token](https://api.slack.com/apps/APU5PU5S9/oauth?success=1) for Quattro Luncher, running:
+
+```sh
+firebase functions:config:set slack.token="ACCESS_TOKEN"
+```
+
+
 ## Author
 
 👤 **pannpers**
