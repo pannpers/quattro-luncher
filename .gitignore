@@ -37,3 +37,4 @@ node_modules
 /test/coverage-karma
 
 .firebase/
+functions/firebase-debug.log
