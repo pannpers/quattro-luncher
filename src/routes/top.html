@@ -10,7 +10,7 @@
       Sign Out
     </button>
 
-    <section if.bind="lunch.hasPartyFixed()">
+    <section if.bind="lunch.hasFixedParties">
       Latest Lunch Date: ${lunch.lunchDate | format}
       <ul>
         <li repeat.for="party of lunch.parties">
@@ -20,25 +20,28 @@
     </section>
 
     <section else>
-      Let's Generate a New Party!!
+      Next Lunch will hold on ${lunch.lunchDate | format}
+      <p>
+        Let's Generate a New Parties!!
+      </p>
 
       <button type="button" click.delegate="generateParties()">Generate</button>
 
+      <button type="button" click.delegate="saveParty()" if.bind="tmpParties.length > 0">Fix!!</button>
+
       <ul>
         <li repeat.for="party of tmpParties">
-          Party ID: ${party.id}
           <p>
-            Leader: ${party.leader.displayName}
+            Leader: ${party.leader.name}
             <ul>
-              <li repeat.for="user of party.users">
-                Member ${index}: ${user.displayName}
+              <li repeat.for="member of party.members">
+                Member ${index}: ${member.name}
               </li>
             </ul>
           </p>
         </li>
       </ul>
 
-      <button type="button" click.delegate="saveParty()" if.bind="tmpParties.length > 0">Fix!!</button>
     </section>
   </article>
 </template>

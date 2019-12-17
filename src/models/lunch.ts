@@ -9,7 +9,7 @@ export class Lunch {
     public skipUserIds: number[],
   ) {}
 
-  public hasPartyFixed(): boolean {
+  get hasFixedParties(): boolean {
     return this.parties.length >= 1
   }
 }
