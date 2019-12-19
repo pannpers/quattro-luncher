@@ -22,7 +22,6 @@ export function configure(aurelia: Aurelia): void {
     auth.auth.onAuthStateChanged(
       async (user): Promise<void> => {
         if (!router.isConfigured) {
-          await aurelia.setRoot()
           aurelia.setRoot(PLATFORM.moduleName('app'))
         }
 

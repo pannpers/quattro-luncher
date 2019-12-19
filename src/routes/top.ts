@@ -19,11 +19,11 @@ export class Top {
 
   async created(): Promise<void> {
     this.lunch = await this.store.getLatestLunch()
-    this.logger.info('fetched next lunch:', this.lunch)
+    this.logger.debug('fetched next lunch:', this.lunch)
 
     if (!this.lunch.hasFixedParties) {
       this.slackUsers = await this.store.listSlackUsers()
-      this.logger.info('fetched slack users', this.slackUsers)
+      this.logger.debug('fetched slack users', this.slackUsers)
     }
   }
 
