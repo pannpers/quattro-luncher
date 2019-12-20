@@ -10,7 +10,13 @@
       Sign Out
     </button>
 
-    <section if.bind="lunch.hasFixedParties">
+    <a route-href="route: upload">
+      <button>
+        Upload
+      </button>
+    </a>
+
+    <section>
       Latest Lunch Date: ${lunch.lunchDate | format}
       <ul>
         <li repeat.for="party of lunch.parties">
@@ -19,29 +25,5 @@
       </ul>
     </section>
 
-    <section else>
-      Next Lunch will hold on ${lunch.lunchDate | format}
-      <p>
-        Let's Generate a New Parties!!
-      </p>
-
-      <button type="button" click.delegate="generateParties()">Generate</button>
-
-      <button type="button" click.delegate="saveParty()" if.bind="tmpParties.length > 0">Fix!!</button>
-
-      <ul>
-        <li repeat.for="party of tmpParties">
-          <p>
-            Leader: ${party.leader.name}
-            <ul>
-              <li repeat.for="member of party.members">
-                Member ${index}: ${member.name}
-              </li>
-            </ul>
-          </p>
-        </li>
-      </ul>
-
-    </section>
   </article>
 </template>
