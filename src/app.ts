@@ -2,8 +2,15 @@
 /* eslint-disable prettier/prettier */
 import { autoinject, PLATFORM } from 'aurelia-framework'
 import { AuthService } from 'services/firebase/auth'
-import { RouterConfiguration, Router } from 'aurelia-router'
+import { RouterConfiguration, Router, RouteConfig } from 'aurelia-router'
 import { AuthorizeStep } from 'authorize-step'
+
+export const RouteConfigs  = {
+  signIn: { route: 'sign-in', name: 'sign-in', moduleId: PLATFORM.moduleName('routes/sign-in'), title: 'Sign In' },
+  top: { route: '', name: 'top', moduleId: PLATFORM.moduleName('routes/top'), title: 'Top Page' },
+  newParty: { route: 'parties/new', name: 'new-party', moduleId: PLATFORM.moduleName('routes/new-party'), title: 'New Lunch Party' },
+  upload: { route: 'upload', name: 'upload', moduleId: PLATFORM.moduleName('routes/upload'), title: 'Upload Photos' },
+}
 
 @autoinject
 export class App {
@@ -19,10 +26,7 @@ export class App {
 
     config.addAuthorizeStep(AuthorizeStep)
 
-    config.map([
-      { route: 'sign-in', name: 'sign-in', moduleId: PLATFORM.moduleName('routes/sign-in'), title: 'Sign In' },
-      { route: '', name: 'top', moduleId: PLATFORM.moduleName('routes/top'), title: 'Top Page' },
-    ])
+    config.map(Object.values(RouteConfigs))
 
     this.router = router
   }
