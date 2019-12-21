@@ -1,5 +1,8 @@
 import * as functions from 'firebase-functions'
 import fetch from 'node-fetch'
+import { CloudVision } from './cloud-vision'
+import { SlackService } from './slack'
+import { FirestoreService, PhotoDoc } from './firestore'
 
 import admin = require('firebase-admin')
 
@@ -19,85 +22,55 @@ admin.initializeApp()
 const tokyoRegion = 'asia-northeast1'
 const slackBaseUrl = 'https://slack.com/api/'
 
-enum SlackMethod {
-  ListUsers = 'users.list',
-}
+export const analyzeSmile = functions
+  .region(tokyoRegion)
+  .storage.object()
+  .onFinalize(
+    async (object, context): Promise<void> => {
+      console.info('file uploaded:', object.name)
 
-interface SlackUser {
-  id: string
-  deleted: boolean
-  profile: {
-    real_name: string
-    display_name: string
-    image_original: string
-  }
-  is_admin: boolean
-  is_restricted: boolean
-}
+      const contentType = object.contentType || ''
+      if (!contentType.startsWith('image/')) {
+        console.warn('This is not an image:', contentType)
+        return
+      }
 
-enum Collection {
-  Users = 'users',
-  SlackUsers = 'slack-users',
-  Lunches = 'lunches',
-  Parties = 'parties',
-}
+      if (!object.name) {
+        console.warn('Object name is empty:', object.name)
+        return
+      }
 
-export interface SlackUserDoc {
-  displayName: string
-  realName: string
-  imageOriginal: string
-  isAdmin: boolean
-  isRestricted: boolean
-}
+      const vision = new CloudVision(object.bucket)
+      const faceAnnotations = await vision.detectFace(object.name)
+      const smileScore = vision.calculateSmileScore(faceAnnotations)
+
+      console.info(`${faceAnnotations.length} faces detected`)
+
+      const { metadata } = object
+      if (!metadata) {
+        console.warn('Object metadata is empty')
+        return
+      }
+      const photo: PhotoDoc = {
+        storagePath: object.name,
+        smileScore,
+        faceAnnotations,
+      }
+
+      const store = new FirestoreService(admin.firestore())
+      await store.addPhotoToParty(metadata.partyId, photo)
+    },
+  )
 
 export const updateUsers = functions.region(tokyoRegion).https.onRequest(async (request, response) => {
   // Fetch Slack users
-  const resp = await fetch(slackBaseUrl + SlackMethod.ListUsers, {
-    method: 'GET',
-    headers: {
-      Authorization: `Bearer ${config.slack.token}`,
-    },
-  }).catch(err => {
-    console.error('failed to get all users:', err)
-    throw err
-  })
-
-  if (!resp.ok) {
-    console.error(`failed to get all users:`, resp.json())
-    throw new Error(`code: ${resp.status}, message: ${resp.statusText}`)
-  }
-
-  const slackUsers = (await resp
-    .json()
-    .then(body => body.members as SlackUser[])
-    .catch(err => {
-      throw err
-    })).filter(user => !user.deleted)
+  const slack = new SlackService(slackBaseUrl, config.slack.token)
+  const slackUsers = await slack.listUsers()
 
   console.info('fetched slack users successfully, len:', slackUsers.length)
 
-  const store = admin.firestore()
-  const batch = store.batch()
-  const slackUserCol = store.collection(Collection.SlackUsers)
-
-  slackUsers.forEach(user => {
-    const prof = user.profile
-    const doc: SlackUserDoc = {
-      displayName: user.profile.display_name || '',
-      realName: prof.real_name || '',
-      imageOriginal: prof.image_original || '',
-      isAdmin: user.is_restricted || false,
-      isRestricted: user.is_restricted || false,
-    }
-    const ref = slackUserCol.doc(user.id)
-    batch.set(ref, doc)
-  })
-
-  const result = await batch.commit().catch(err => {
-    console.error('failed to update slack users in bulk', err)
-    throw err
-  })
-  console.info('update Slack users successful', result)
+  const store = new FirestoreService(admin.firestore())
+  await store.updateSlackUsers(slackUsers)
 
   response.send('ok')
 })
