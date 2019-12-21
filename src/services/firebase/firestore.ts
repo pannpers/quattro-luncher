@@ -43,6 +43,12 @@ export interface SlackUserDoc {
   isRestricted: boolean
 }
 
+export interface PhotoDoc {
+  storagePath: string
+  smileScore: number
+  // faceAnnotation:
+}
+
 export class FirestoreService {
   private readonly logger = getLogger(FirestoreService.name)
 

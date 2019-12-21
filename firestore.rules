@@ -16,5 +16,9 @@ service cloud.firestore {
     match /users/{user} {
       allow read: if signedIn();
     }
+
+    match /slack-users/{user} {
+      allow read: if signedIn();
+    }
   }
 }

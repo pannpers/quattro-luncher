@@ -12,5 +12,9 @@
       "autoFix": true
     }
   ],
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  },
+  "eslint.enable": true,
   // "prettier.eslintIntegration": true,
 }
