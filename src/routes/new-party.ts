@@ -62,6 +62,6 @@ export class NewParty {
       this.logger.error('failed to save parties of lunch:', err)
     }
 
-    this.router.navigateToRoute(RouteConfigs.top.route)
+    this.router.navigateToRoute(RouteConfigs.top.name)
   }
 }

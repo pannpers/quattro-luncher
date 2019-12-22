@@ -10,6 +10,7 @@
   "dependencies": {
     "aurelia-animator-css": "^1.0.4",
     "aurelia-bootstrapper": "^2.3.2",
+    "aurelia-dialog": "^2.0.0-rc.8",
     "date-fns": "^2.6.0",
     "firebase": "^7.2.2",
     "firebaseui": "^4.2.0"

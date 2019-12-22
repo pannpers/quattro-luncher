@@ -7,6 +7,11 @@ service cloud.firestore {
       return request.auth.uid != null && request.auth.token.email.matches('.+@zeals[.]co[.]jp');
     }
 
+    // https://firebase.google.com/docs/auth/admin/custom-claims
+    function admin() {
+      return request.auth.token.admin == true;
+    }
+
     match /lunches/{lunch} {
       allow read, write: if signedIn();
     }
@@ -21,6 +26,7 @@ service cloud.firestore {
 
     match /slack-users/{user} {
       allow read: if signedIn();
+      allow write: if admin();
     }
   }
 }

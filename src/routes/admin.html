@@ -1,3 +1,26 @@
 <template>
+  <require from="./admin.scss"></require>
 
+  <article id="admin">
+    <header>
+      <h1>Update Active Slack User</h1>
+    </header>
+
+    <section>
+      <div>
+      <div class="hoge">
+        <div class="container">
+          <ul>
+            <li repeat.for="user of slackUsers">
+              <!-- <label class="${user.isActive ? 'red' : 'gray'}"> -->
+              <label>
+                <input type="checkbox" checked.bind="user.isActive" change.delegate="updateActive(user)"> ${user.name}
+              </label>
+              <img src.bind="user.imageOriginal" alt="">
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  </article>
 </template>
