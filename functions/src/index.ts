@@ -1,5 +1,4 @@
 import * as functions from 'firebase-functions'
-import fetch from 'node-fetch'
 import { CloudVision } from './cloud-vision'
 import { SlackService } from './slack'
 import { FirestoreService, PhotoDoc } from './firestore'
@@ -58,7 +57,7 @@ export const analyzeSmile = functions
       }
 
       const store = new FirestoreService(admin.firestore())
-      await store.addPhotoToParty(metadata.partyId, photo)
+      await store.addPhotoToParty(metadata.lunchId, metadata.partyId, photo)
     },
   )
 

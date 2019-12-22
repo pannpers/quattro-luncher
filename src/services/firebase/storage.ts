@@ -1,4 +1,5 @@
 import { getLogger } from 'aurelia-logging'
+import { Lunch } from 'models/lunch'
 
 export class StorageService {
   private readonly logger = getLogger(StorageService.name)
@@ -9,13 +10,15 @@ export class StorageService {
     this.imageRef = this.storage.ref().child('images')
   }
 
-  async upload(lunchDate: Date, partyId: string, file: Blob | File, contentType: string): Promise<void> {
-    const yyyy = lunchDate.getFullYear()
-    const mm = (lunchDate.getMonth() + 1).toString().padStart(2, '0')
+  async upload(lunch: Lunch, file: Blob | File, contentType: string): Promise<void> {
+    const yyyy = lunch.lunchDate.getFullYear()
+    const mm = (lunch.lunchDate.getMonth() + 1).toString().padStart(2, '0')
+    const partyId = lunch.parties[0].id
     const metadata: firebase.storage.UploadMetadata = {
       contentType,
       customMetadata: {
-        partyId,
+        lunchId: lunch.id,
+        partyId: partyId,
       },
     }
 

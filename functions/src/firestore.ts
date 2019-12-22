@@ -49,8 +49,12 @@ export class FirestoreService {
     console.info('update Slack users successful', result)
   }
 
-  async addPhotoToParty(partyId: string, photo: PhotoDoc): Promise<void> {
-    const partyDoc = this.store.collection(Collection.Parties).doc(partyId)
+  async addPhotoToParty(lunchId: string, partyId: string, photo: PhotoDoc): Promise<void> {
+    const partyDoc = this.store
+      .collection(Collection.Lunches)
+      .doc(lunchId)
+      .collection(Collection.Parties)
+      .doc(partyId)
     await partyDoc.update({ photo })
   }
 }

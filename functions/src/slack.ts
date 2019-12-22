@@ -1,3 +1,5 @@
+import fetch from 'node-fetch'
+
 enum SlackMethod {
   ListUsers = 'users.list',
 }
