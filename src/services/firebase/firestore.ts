@@ -25,8 +25,7 @@ export interface LunchDoc {
 }
 
 export interface PartyDoc {
-  leader: firebase.firestore.DocumentReference
-  members: firebase.firestore.DocumentReference[]
+  users: firebase.firestore.DocumentReference[]
 }
 
 export interface UserDoc {
@@ -55,19 +54,26 @@ export class FirestoreService {
 
   constructor(private store: firebase.firestore.Firestore) {}
 
-  public async listSlackUsers(): Promise<SlackUser[]> {
+  async listActiveSlackUsers(): Promise<SlackUser[]> {
+    const snapshot = await this.store
+      .collection(Collection.SlackUsers)
+      .where('isActive', '==', true)
+      .get()
+
+      if (snapshot.empty) return []
+
+      return snapshot.docs.map(doc => {
+        const d = doc.data() as SlackUserDoc
+        return SlackUser.fromObj(doc.id, d)
+      })
+  }
+
+  async listSlackUsers(): Promise<SlackUser[]> {
     const snapshot = await this.store
       .collection(Collection.SlackUsers)
       .get()
-      .catch(err => {
-        this.logger.error('failed to get all users', err)
-        throw err
-      })
 
-    this.logger.debug('users:', snapshot)
-    if (snapshot.empty) {
-      return []
-    }
+    if (snapshot.empty) return []
 
     return snapshot.docs.map(doc => {
       const d = doc.data() as SlackUserDoc
@@ -99,13 +105,9 @@ export class FirestoreService {
     const lunchDoc = doc.data() as LunchDoc
     this.logger.debug('LunchDoc', lunchDoc)
 
-    const partySnapshot = await doc.ref
-      .collection(Collection.Parties)
-      .get()
-      .catch(err => {
-        this.logger.error('failed to get parties', err)
-        throw err
-      })
+    const partySnapshot = await doc.ref.collection(Collection.Parties).get()
+    this.logger.debug('partySnapshot', partySnapshot)
+
     let parties = []
     if (!partySnapshot.empty) {
       const partyProm = partySnapshot.docs.map(this.getPartyFrom)
@@ -120,13 +122,11 @@ export class FirestoreService {
     const lunchRef = this.store.collection(Collection.Lunches).doc(luncId)
     parties.forEach(party => {
       this.logger.debug('party:', party)
-      const leaderRef = this.store.collection(Collection.SlackUsers).doc(party.leader.id)
-      const memberRefs = party.members.map(member =>
-        this.store.collection(Collection.SlackUsers).doc(member.id),
+      const userDocs = party.users.map(user =>
+        this.store.collection(Collection.SlackUsers).doc(user.id),
       )
       const src: PartyDoc = {
-        leader: leaderRef,
-        members: memberRefs,
+        users: userDocs,
       }
 
       lunchRef.collection(Collection.Parties).add(src)
@@ -136,19 +136,15 @@ export class FirestoreService {
   private getPartyFrom = async (partySnapshot: firebase.firestore.QueryDocumentSnapshot): Promise<Party> => {
     const partyDoc = partySnapshot.data() as PartyDoc
 
-    const leaderSnap = await partyDoc.leader.get()
-    const leader = await this.getSlackUser(leaderSnap)
-
-    const promises = partyDoc.members.map(async userDocRef => {
+    const promises = partyDoc.users.map(async userDocRef => {
       const userSnap = await userDocRef.get()
       return this.getSlackUser(userSnap)
     })
-    const members = await Promise.all(promises)
+    const users = await Promise.all(promises)
 
     const party = new Party()
     party.id = partySnapshot.id
-    party.leader = leader
-    party.members = members
+    party.users = users
 
     return party
   }

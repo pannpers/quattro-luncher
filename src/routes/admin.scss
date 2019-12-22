@@ -1,7 +1,22 @@
 article#admin {
-  li {
-    img {
-      width: 30px;
+  section {
+    display: grid;
+    li {
+      display: grid;
+      grid-template-columns: 100px 1fr auto;
+      input {
+        grid-column: 1;
+      }
+
+      label {
+        grid-column: 2;
+      }
+
+      img {
+        grid-column: 3;
+        width: 30px;
+      }
     }
+
   }
 }

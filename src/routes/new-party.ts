@@ -18,7 +18,11 @@ export class NewParty {
   constructor(private router: Router, private store: FirestoreService) {}
 
   async canActivate(): Promise<boolean | Redirect> {
-    this.lunch = await this.store.getLatestLunch()
+    try {
+      this.lunch = await this.store.getLatestLunch()
+    } catch (err) {
+      this.logger.error('failed to latest lunch:', err)
+    }
     this.logger.debug('fetched next lunch:', this.lunch)
 
     if (this.lunch.hasFixedParties) {
@@ -31,7 +35,11 @@ export class NewParty {
 
   async created(): Promise<void> {
     if (!this.lunch.hasFixedParties) {
-      this.slackUsers = await this.store.listSlackUsers()
+      try {
+        this.slackUsers = await this.store.listActiveSlackUsers()
+      } catch (err) {
+        this.logger.error('failed to list active slack users:', err)
+      }
       this.logger.debug('fetched slack users', this.slackUsers)
     }
   }
@@ -45,9 +53,8 @@ export class NewParty {
 
     for (let i = 0; i < partyLen; i++) {
       const party = new Party()
-      party.leader = randomized.shift()
-      const userLen = i < restLen ? 4 : 3
-      party.members = randomized.splice(0, userLen)
+      const userLen = i < restLen ? 5 : 4
+      party.users = randomized.splice(0, userLen)
 
       parties[i] = party
     }

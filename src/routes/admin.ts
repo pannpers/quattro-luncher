@@ -1,7 +1,8 @@
 import { autoinject } from 'aurelia-framework'
 import { getLogger } from 'aurelia-logging'
-import { FirestoreService } from "services/firebase/firestore";
-import { SlackUser } from 'models/slack-user';
+import { FirestoreService } from 'services/firebase/firestore'
+import { SlackUser } from 'models/slack-user'
+
 
 @autoinject
 export class Admin {

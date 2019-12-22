@@ -1,0 +1,14 @@
+<template>
+  <ul>
+    <li repeat.for="party of parties">
+      <p>
+        Leader: ${party.users[0].name}
+        <ul>
+          <li repeat.for="user of party.users">
+            Member ${index}: ${user.name}
+          </li>
+        </ul>
+      </p>
+    </li>
+  </ul>
+</template>

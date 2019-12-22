@@ -1,5 +1,6 @@
 <template>
   <require from="../resources/value-converters/format"></require>
+  <require from="../resources/elements/party-list"></require>
 
   <article id="new-party">
     <header>
@@ -16,18 +17,7 @@
 
       <button type="button" click.delegate="saveParty()" if.bind="tmpParties.length > 0">Fix!!</button>
 
-      <ul>
-        <li repeat.for="party of tmpParties">
-          <p>
-            Leader: ${party.leader.name}
-            <ul>
-              <li repeat.for="member of party.members">
-                Member ${index}: ${member.name}
-              </li>
-            </ul>
-          </p>
-        </li>
-      </ul>
+      <party-list parties.bind="tmpParties"></party-list>
 
     </section>
   </article>

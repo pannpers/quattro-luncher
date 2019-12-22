@@ -7,20 +7,15 @@
     </header>
 
     <section>
-      <div>
-      <div class="hoge">
-        <div class="container">
-          <ul>
-            <li repeat.for="user of slackUsers">
-              <!-- <label class="${user.isActive ? 'red' : 'gray'}"> -->
-              <label>
-                <input type="checkbox" checked.bind="user.isActive" change.delegate="updateActive(user)"> ${user.name}
-              </label>
-              <img src.bind="user.imageOriginal" alt="">
-            </li>
-          </ul>
-        </div>
-      </div>
+      <ul>
+        <li repeat.for="user of slackUsers">
+          <input type="checkbox" checked.bind="user.isActive" change.delegate="updateActive(user)">
+
+          <label>${user.name}</label>
+
+          <img src.bind="user.imageOriginal" alt="">
+        </li>
+      </ul>
     </section>
   </article>
 </template>
