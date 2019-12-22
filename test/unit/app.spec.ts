@@ -1,6 +1,6 @@
-import { bootstrap } from 'aurelia-bootstrapper'
-import { StageComponent } from 'aurelia-testing'
-import { PLATFORM } from 'aurelia-pal'
+// import { bootstrap } from 'aurelia-bootstrapper'
+// import { StageComponent } from 'aurelia-testing'
+// import { PLATFORM } from 'aurelia-pal'
 
 // describe('Stage App Component', () => {
 //   let component;

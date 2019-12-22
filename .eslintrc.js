@@ -13,9 +13,7 @@ module.exports = {
     sourceType: 'module', // allow for the use of imports
     // project: './tsconfig.json',
   },
-  plugins: [
-    'prettier',
-  ],
+  plugins: ['prettier'],
   extends: [
     // 'plugin:import/typescript',
     // https://github.com/airbnb/javascript/tree/master/packages/eslint-config-airbnb-base
@@ -29,11 +27,12 @@ module.exports = {
   settings: {
     'import/resolver': {
       node: {
-        paths: [ 'src' ],
-        extensions: [ '.js', '.ts', 'd.ts' ],
-      }
-    }
+        paths: ['src' ],
+        extensions: ['.js', '.ts', 'd.ts'],
+      },
+    },
   },
+  ignorePatterns: ['!.eslintrc.js'],
   rules: {
     'prettier/prettier': 'error',
     'lines-between-class-members': 'off',
@@ -44,8 +43,9 @@ module.exports = {
     'no-plusplus': 'off',
     'class-methods-use-this': 'off',
     'import/no-extraneous-dependencies': 'off',
+    'import/extensions': 'off',
     'import/prefer-default-export': 'off',
     '@typescript-eslint/explicit-member-accessibility': 'off',
     '@typescript-eslint/no-parameter-properties': 'off',
   },
-};
+}

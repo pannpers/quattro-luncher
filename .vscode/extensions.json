@@ -1,6 +1,7 @@
 {
   "recommendations": [
     "AureliaEffect.aurelia",
+    "toba.vsfire",
     "msjsdiag.debugger-for-chrome",
     "steoates.autoimport",
     "EditorConfig.EditorConfig",
