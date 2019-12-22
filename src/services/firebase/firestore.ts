@@ -41,6 +41,7 @@ export interface SlackUserDoc {
   imageOriginal: string
   isAdmin: boolean
   isRestricted: boolean
+  isActive: boolean
 }
 
 export interface PhotoDoc {
@@ -70,8 +71,14 @@ export class FirestoreService {
 
     return snapshot.docs.map(doc => {
       const d = doc.data() as SlackUserDoc
-      return new SlackUser(doc.id, d.displayName, d.realName, d.imageOriginal, d.isAdmin, d.isRestricted)
+      return new SlackUser(doc.id, d.displayName, d.realName, d.imageOriginal, d.isAdmin, d.isRestricted, d.isActive)
     })
+  }
+
+  async updateActiveSlackUser(slackUserId: string, isActive: boolean): Promise<void> {
+    this.logger.debug(`update slack user ${slackUserId} to isActive: ${isActive}`)
+    return this.store.collection(Collection.SlackUsers).doc(slackUserId)
+      .update({ isActive: isActive })
   }
 
   public async getLatestLunch(): Promise<Lunch> {

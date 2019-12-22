@@ -15,6 +15,7 @@ export interface SlackUserDoc {
   imageOriginal: string
   isAdmin: boolean
   isRestricted: boolean
+  isActive?: boolean
 }
 
 export interface PhotoDoc {
@@ -30,7 +31,7 @@ export class FirestoreService {
     const batch = this.store.batch()
     const slackUserCol = this.store.collection(Collection.SlackUsers)
 
-    users.forEach(user => {
+    const queues = users.map(async (user) => {
       const prof = user.profile
       const doc: SlackUserDoc = {
         displayName: user.profile.display_name || '',
@@ -40,13 +41,19 @@ export class FirestoreService {
         isRestricted: user.is_restricted || false,
       }
       const ref = slackUserCol.doc(user.id)
-      batch.set(ref, doc)
+      const r = await ref.get()
+      if (r.exists) {
+        return batch.update(ref, doc)
+      } else {
+        return batch.set(ref, doc)
+      }
     })
 
-    const result = await batch.commit().catch(err => {
+    await Promise.all(queues)
+    await batch.commit().catch(err => {
       throw new Error(`failed to update slack users in bulk: ${err}`)
     })
-    console.info('update Slack users successful', result)
+    console.info('update Slack users successful')
   }
 
   async addPhotoToParty(lunchId: string, partyId: string, photo: PhotoDoc): Promise<void> {
