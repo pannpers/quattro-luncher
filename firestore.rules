@@ -1,8 +1,10 @@
+// https://firebase.google.com/docs/firestore/security/rules-conditions
+// https://firebase.google.com/docs/reference/rules/rules.firestore.Request.html
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     function signedIn() {
-      return request.auth.uid != null;
+      return request.auth.uid != null && request.auth.token.email.matches('.+@zeals[.]co[.]jp');
     }
 
     match /lunches/{lunch} {
