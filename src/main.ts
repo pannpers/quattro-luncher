@@ -25,18 +25,7 @@ export function configure(aurelia: Aurelia): void {
           aurelia.setRoot(PLATFORM.moduleName('app'))
         }
 
-        if (user === null) {
-          auth.isSignedIn = false
-        } else {
-          if (auth.validate(user)) {
-            auth.isSignedIn = true
-            auth.logger.info(`${user} is signed in`)
-          } else {
-            // TODO: use popup dialog
-            auth.logger.warn(`sign out because ${user.email.split('@')[1]} is not allowed domain`)
-            auth.signOut()
-          }
-        }
+        auth.updateUserState(user)
       },
     )
   })

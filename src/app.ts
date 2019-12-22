@@ -5,7 +5,8 @@ import { AuthService } from 'services/firebase/auth'
 import { RouterConfiguration, Router, RouteConfig } from 'aurelia-router'
 import { AuthorizeStep } from 'authorize-step'
 
-export const RouteConfigs  = {
+export const RouteConfigs = {
+  admin: { route: 'admin', name: 'admin', moduleId: PLATFORM.moduleName('routes/admin'), title: 'Administrator', settings: { admin: true } },
   signIn: { route: 'sign-in', name: 'sign-in', moduleId: PLATFORM.moduleName('routes/sign-in'), title: 'Sign In' },
   top: { route: '', name: 'top', moduleId: PLATFORM.moduleName('routes/top'), title: 'Top Page' },
   newParty: { route: 'parties/new', name: 'new-party', moduleId: PLATFORM.moduleName('routes/new-party'), title: 'New Lunch Party' },

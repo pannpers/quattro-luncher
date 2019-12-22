@@ -61,7 +61,7 @@ export const analyzeSmile = functions
     },
   )
 
-export const updateUsers = functions.region(tokyoRegion).https.onRequest(async (request, response) => {
+export const updateSlackUsers = functions.region(tokyoRegion).https.onRequest(async (req, resp) => {
   // Fetch Slack users
   const slack = new SlackService(slackBaseUrl, config.slack.token)
   const slackUsers = await slack.listUsers()
@@ -71,5 +71,13 @@ export const updateUsers = functions.region(tokyoRegion).https.onRequest(async (
   const store = new FirestoreService(admin.firestore())
   await store.updateSlackUsers(slackUsers)
 
-  response.send('ok')
+  resp.send('ok')
+})
+
+export const updateUserClaims = functions.region(tokyoRegion).https.onRequest(async (req, resp) => {
+  const uid = req.body.uid
+  const userClaims = req.body.userClaims
+  await admin.auth().setCustomUserClaims(uid, userClaims)
+
+  resp.send('ok')
 })
