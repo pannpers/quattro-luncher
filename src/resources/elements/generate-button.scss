@@ -1,0 +1,11 @@
+button {
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    width: 160px;
+    color: #fff;
+    padding: 10px;
+    &.generate {
+        background: #929292;
+    }
+}
+

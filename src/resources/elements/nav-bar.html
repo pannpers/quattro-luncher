@@ -1,0 +1,15 @@
+<!-- https://medium.com/@vijit2ail/tutorial-bottom-navigation-interaction-using-css-js-for-beginners-78da33b71571 -->
+<template>
+  <require from="./nav-bar.scss"></require>
+  <nav>
+    <ul>
+      <li repeat.for="route of router.navigation"
+          class="${route.title.toLowerCase()} ${route.isActive ? 'active' : ''}">
+        <a href.bind="route.href">
+          <i class="material-icons">${route.settings.icon}</i>
+          <span class="nav-text">${route.title}</span>
+        </a>
+      </li>
+    </ul>
+  </nav>
+</template>
