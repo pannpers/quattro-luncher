@@ -1,12 +1,12 @@
 import { SlackUser } from './slack'
 import { FaceAnnotation } from './cloud-vision'
 
-enum Collection {
+export enum Collection {
   Users = 'users',
   SlackUsers = 'slack-users',
   Lunches = 'lunches',
   Parties = 'parties',
-  FaceAnnotations = 'face-annotations',
+  Photos = 'photos',
 }
 
 export interface SlackUserDoc {
@@ -16,6 +16,11 @@ export interface SlackUserDoc {
   isAdmin: boolean
   isRestricted: boolean
   isActive?: boolean
+}
+
+export interface PartyDoc {
+  users: FirebaseFirestore.DocumentReference[]
+  photo: PhotoDoc
 }
 
 export interface PhotoDoc {
@@ -31,7 +36,7 @@ export class FirestoreService {
     const batch = this.store.batch()
     const slackUserCol = this.store.collection(Collection.SlackUsers)
 
-    const queues = users.map(async (user) => {
+    const queues = users.map(async user => {
       const prof = user.profile
       const doc: SlackUserDoc = {
         displayName: user.profile.display_name || '',
@@ -44,9 +49,8 @@ export class FirestoreService {
       const r = await ref.get()
       if (r.exists) {
         return batch.update(ref, doc)
-      } else {
-        return batch.set(ref, doc)
       }
+      return batch.set(ref, doc)
     })
 
     await Promise.all(queues)
@@ -57,11 +61,13 @@ export class FirestoreService {
   }
 
   async addPhotoToParty(lunchId: string, partyId: string, photo: PhotoDoc): Promise<void> {
-    const partyDoc = this.store
+    const photoRef = await this.store.collection(Collection.Photos).add({ photo })
+
+    await this.store
       .collection(Collection.Lunches)
       .doc(lunchId)
       .collection(Collection.Parties)
       .doc(partyId)
-    await partyDoc.update({ photo })
+      .update({ photo: photoRef })
   }
 }
