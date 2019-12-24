@@ -15,7 +15,7 @@ const when = (condition, config, negativeConfig) =>
   condition ? ensureArray(config) : ensureArray(negativeConfig)
 
 // primary config:
-const title = 'Aurelia Navigation Skeleton'
+const title = 'Quattro Luncher'
 const outDir = path.resolve(__dirname, project.platform.output)
 const srcDir = path.resolve(__dirname, 'src')
 const nodeModulesDir = path.resolve(__dirname, 'node_modules')
@@ -279,7 +279,15 @@ module.exports = ({ production, staging } = {}, { extractCss, analyze, tests, hm
         chunkFilename: production ? 'css/[name].[contenthash].chunk.css' : 'css/[name].[hash].chunk.css',
       }),
     ),
-    ...when(!tests, new CopyWebpackPlugin([{ from: 'static', to: outDir, ignore: ['.*'] }])), // ignore dot (hidden) files
+    ...when(
+      !tests,
+      new CopyWebpackPlugin([
+        // { from: 'static', to: outDir },
+        { from: 'static', to: outDir, ignore: ['.*'] },
+        { from: 'manifest.json', to: outDir },
+        { from: 'sw.js', to: outDir },
+      ]),
+    ), // ignore dot (hidden) files
     ...when(analyze, new BundleAnalyzerPlugin()),
     /**
      * Note that the usage of following plugin cleans the webpack output directory before build.

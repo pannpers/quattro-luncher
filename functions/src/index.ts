@@ -75,8 +75,8 @@ export const updateSlackUsers = functions.region(tokyoRegion).https.onRequest(as
 })
 
 export const updateUserClaims = functions.region(tokyoRegion).https.onRequest(async (req, resp) => {
-  const uid = req.body.uid
-  const userClaims = req.body.userClaims
+  const { uid } = req.body
+  const { userClaims } = req.body
   await admin.auth().setCustomUserClaims(uid, userClaims)
 
   resp.send('ok')

@@ -60,31 +60,39 @@ export class FirestoreService {
       .where('isActive', '==', true)
       .get()
 
-      if (snapshot.empty) return []
+    if (snapshot.empty) return []
 
-      return snapshot.docs.map(doc => {
-        const d = doc.data() as SlackUserDoc
-        return SlackUser.fromObj(doc.id, d)
-      })
+    return snapshot.docs.map(doc => {
+      const d = doc.data() as SlackUserDoc
+      return SlackUser.fromObj(doc.id, d)
+    })
   }
 
   async listSlackUsers(): Promise<SlackUser[]> {
-    const snapshot = await this.store
-      .collection(Collection.SlackUsers)
-      .get()
+    const snapshot = await this.store.collection(Collection.SlackUsers).get()
 
     if (snapshot.empty) return []
 
     return snapshot.docs.map(doc => {
       const d = doc.data() as SlackUserDoc
-      return new SlackUser(doc.id, d.displayName, d.realName, d.imageOriginal, d.isAdmin, d.isRestricted, d.isActive)
+      return new SlackUser(
+        doc.id,
+        d.displayName,
+        d.realName,
+        d.imageOriginal,
+        d.isAdmin,
+        d.isRestricted,
+        d.isActive,
+      )
     })
   }
 
   async updateActiveSlackUser(slackUserId: string, isActive: boolean): Promise<void> {
     this.logger.debug(`update slack user ${slackUserId} to isActive: ${isActive}`)
-    return this.store.collection(Collection.SlackUsers).doc(slackUserId)
-      .update({ isActive: isActive })
+    return this.store
+      .collection(Collection.SlackUsers)
+      .doc(slackUserId)
+      .update({ isActive })
   }
 
   public async getLatestLunch(): Promise<Lunch> {
@@ -118,13 +126,11 @@ export class FirestoreService {
     return new Lunch(doc.id, lunchDoc.backNumber, lunchDoc.lunchDate.toDate(), parties, lunchDoc.skipUserIds)
   }
 
-  public async fixParties(luncId: string, parties: Party[]): Promise<void> {
-    const lunchRef = this.store.collection(Collection.Lunches).doc(luncId)
+  public async fixParties(lunchId: string, parties: Party[]): Promise<void> {
+    const lunchRef = this.store.collection(Collection.Lunches).doc(lunchId)
     parties.forEach(party => {
       this.logger.debug('party:', party)
-      const userDocs = party.users.map(user =>
-        this.store.collection(Collection.SlackUsers).doc(user.id),
-      )
+      const userDocs = party.users.map(user => this.store.collection(Collection.SlackUsers).doc(user.id))
       const src: PartyDoc = {
         users: userDocs,
       }
