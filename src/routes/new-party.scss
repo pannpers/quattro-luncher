@@ -1,0 +1,14 @@
+party-list + ul {
+    li {
+        border: 1px solid #545454;
+        border-radius: 10px;
+        padding: 10px;
+        + p {
+            font-size: 5vw;
+            margin-bottom: 2vw;
+        }
+        + ul {
+            line-height: 1.3;
+        }
+    }
+}

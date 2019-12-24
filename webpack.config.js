@@ -279,11 +279,11 @@ module.exports = ({ production, staging } = {}, { extractCss, analyze, tests, hm
         chunkFilename: production ? 'css/[name].[contenthash].chunk.css' : 'css/[name].[hash].chunk.css',
       }),
     ),
+    ...when(!tests, new CopyWebpackPlugin([{ from: 'static', to: outDir, ignore: ['.*'] }])), // ignore dot (hidden) files
     ...when(
-      !tests,
+      production,
       new CopyWebpackPlugin([
-        // { from: 'static', to: outDir },
-        { from: 'static', to: outDir, ignore: ['.*'] },
+        { from: 'static', to: outDir },
         { from: 'manifest.json', to: outDir },
         { from: 'sw.js', to: outDir },
       ]),

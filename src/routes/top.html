@@ -1,34 +1,20 @@
 <template>
   <require from="../resources/value-converters/format"></require>
+  <require from="../resources/elements/party-list"></require>
 
   <article id="top">
     <header>
-      <h1>Welcome to Aurelia Scaffold App</h1>
+      <h1>Welcome to Quattro Luncher!!</h1>
     </header>
 
     <button click.delegate="signOut()">
       Sign Out
     </button>
 
-    <a route-href="route: upload">
-      <button>
-        Upload
-      </button>
-    </a>
-
-    <a route-href="route: admin">
-      <button>
-        Admin
-      </button>
-    </a>
-
     <section>
       Latest Lunch Date: ${lunch.lunchDate | format}
-      <ul>
-        <li repeat.for="party of lunch.parties">
-          Party ID: ${party.id}
-        </li>
-      </ul>
+
+      <party-list parties.bind="lunch.parties"></party-list>
     </section>
 
   </article>
