@@ -2,10 +2,12 @@
   <ul>
     <li repeat.for="party of parties">
       <p>
-        Leader: ${party.users[0].name}
+        <img src.bind="party.leader.imageOriginal" alt="" class="icon">
+        ${party.leader.name}
         <ul>
-          <li repeat.for="user of party.users">
-            Member ${index}: ${user.name}
+          <li repeat.for="user of party.members">
+            <img src.bind="user.imageOriginal" alt="" class="icon">
+            ${user.name}
           </li>
         </ul>
       </p>

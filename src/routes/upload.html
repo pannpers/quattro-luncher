@@ -1,14 +1,15 @@
 <template>
   <article id="upload">
-    <section>
-      <input type="file" id="snap" files.bind="selectedFiles">
+    <header>
+      <h1>Upload Lunch Photo</h1>
+    </header>
 
-      <ul>
-        <!-- <li repeat.for="file of selectedFiles">
-          <img src="" alt="">
-        </li> -->
-      </ul>
-      <button click.delegate="upload()">
+    <section>
+      <input type="file" id="snap" files.bind="selectedFiles" change.delegate="setObjectUrl()">
+
+      <img src.bind="objectUrl" alt="" if.bind="objectUrl">
+
+      <button type="submit" click.delegate="upload()" if.bind="objectUrl">
         Upload
       </button>
     </section>

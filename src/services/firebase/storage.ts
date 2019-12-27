@@ -10,22 +10,20 @@ export class StorageService {
     this.imageRef = this.storage.ref().child('images')
   }
 
-  async upload(lunch: Lunch, file: Blob | File, contentType: string): Promise<void> {
+  async upload(lunch: Lunch, partyId: string, file: Blob | File): Promise<void> {
     const yyyy = lunch.lunchDate.getFullYear()
     const mm = (lunch.lunchDate.getMonth() + 1).toString().padStart(2, '0')
-    const partyId = lunch.parties[0].id
     const metadata: firebase.storage.UploadMetadata = {
-      contentType,
+      contentType: file.type,
       customMetadata: {
         lunchId: lunch.id,
-        partyId: partyId,
+        partyId,
       },
     }
 
     const ref = this.imageRef.child(`${yyyy}/${mm}/${partyId}.png`)
     try {
       const snapshot = await ref.put(file, metadata)
-      this.logger.debug('downloadURL', snapshot.downloadURL)
     } catch (err) {
       this.logger.error('failed to upload image', err)
     }

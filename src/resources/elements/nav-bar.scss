@@ -9,7 +9,7 @@ nav {
     // width: 375px;
     // width: 100%;
     margin: auto;
-    padding: 25px 20px;
+    padding: 12px 20px;
     box-shadow: 0px 5px 40px rgba(0, 0, 0, 0.8);
   }
 
@@ -33,9 +33,9 @@ nav {
     }
 
     &.home { color: #5a35b5; }
-    &.photo { color: #c9329a; }
+    &.upload { color: #c9329a; }
     &.history { color: #e5a023; }
-    &.admin { color: #0091a9; }
+    &.new-party { color: #0091a9; }
 
     a {
       display: flex;

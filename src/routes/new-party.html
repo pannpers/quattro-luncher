@@ -12,15 +12,19 @@
     <section>
       <p>Next Lunch will hold on ${lunch.lunchDate | format}</p>
       <p>Let's Generate a New Parties!!</p>
+    </section>
 
+    <section if.bind="!lunch.hasFixedParties">
       <generate-button click.delegate="generateParties()"></generate-button>
-      <save-button click.delegate="saveParty()" if.bind="tmpParties.length > 0"></save-button>
+      <save-button click.delegate="saveParty()" if.bind="canFixParties"></save-button>
 
       <party-list parties.bind="tmpParties"></party-list>
-
-      <generate-button if.bind="parties.length === 0" click.delegate="generateParties()"></generate-button>
-
     </section>
+
+    <section else>
+      Party has already fixed!!
+    </section>
+
   </article>
 </template>
 

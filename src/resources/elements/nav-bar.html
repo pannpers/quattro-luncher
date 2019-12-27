@@ -4,7 +4,7 @@
   <nav>
     <ul>
       <li repeat.for="route of router.navigation"
-          class="${route.title.toLowerCase()} ${route.isActive ? 'active' : ''}">
+          class="${route.config.name} ${route.isActive ? 'active' : ''}">
         <a href.bind="route.href">
           <i class="material-icons">${route.settings.icon}</i>
           <span class="nav-text">${route.title}</span>

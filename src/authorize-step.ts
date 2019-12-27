@@ -27,6 +27,6 @@ export class AuthorizeStep {
       return next()
     }
     this.logger.warn(`missing required permissions`)
-    return next.cancel(new Redirect(RouteConfigs.top.route))
+    return next.cancel(new Redirect(RouteConfigs.home.route))
   }
 }

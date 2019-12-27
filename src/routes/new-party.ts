@@ -1,11 +1,12 @@
 import { RouteConfigs } from 'app'
-import { autoinject } from 'aurelia-framework'
+import { computedFrom, autoinject } from 'aurelia-framework'
 import { getLogger } from 'aurelia-logging'
-import { Router, Redirect } from 'aurelia-router'
+import { Router } from 'aurelia-router'
 import { Lunch } from 'models/lunch'
 import { Party } from 'models/party'
 import { SlackUser } from 'models/slack-user'
 import { FirestoreService } from 'services/firebase/firestore'
+import { AuthService } from 'services/firebase/auth'
 
 @autoinject
 export class NewParty {
@@ -15,9 +16,9 @@ export class NewParty {
   slackUsers: SlackUser[] = []
   tmpParties: Party[] = []
 
-  constructor(private router: Router, private store: FirestoreService) {}
+  constructor(private router: Router, private store: FirestoreService, private auth: AuthService) {}
 
-  async canActivate(): Promise<boolean | Redirect> {
+  async attached(): Promise<void> {
     try {
       this.lunch = await this.store.getLatestLunch()
     } catch (err) {
@@ -26,22 +27,19 @@ export class NewParty {
     this.logger.debug('fetched next lunch:', this.lunch)
 
     if (this.lunch.hasFixedParties) {
-      this.logger.info(`redirect to ${RouteConfigs.top.name} page`)
-      return new Redirect(RouteConfigs.top.route)
+      return
     }
-
-    return true
+    try {
+      this.slackUsers = await this.store.listActiveSlackUsers()
+    } catch (err) {
+      this.logger.error('failed to list active slack users:', err)
+    }
+    this.logger.debug('fetched slack users', this.slackUsers)
   }
 
-  async created(): Promise<void> {
-    if (!this.lunch.hasFixedParties) {
-      try {
-        this.slackUsers = await this.store.listActiveSlackUsers()
-      } catch (err) {
-        this.logger.error('failed to list active slack users:', err)
-      }
-      this.logger.debug('fetched slack users', this.slackUsers)
-    }
+  @computedFrom('tmpParties')
+  get canFixParties(): boolean {
+    return this.auth.isAdmin && this.tmpParties.length > 0
   }
 
   generateParties(): void {
@@ -69,6 +67,6 @@ export class NewParty {
       this.logger.error('failed to save parties of lunch:', err)
     }
 
-    this.router.navigateToRoute(RouteConfigs.top.name)
+    this.router.navigateToRoute(RouteConfigs.home.name)
   }
 }

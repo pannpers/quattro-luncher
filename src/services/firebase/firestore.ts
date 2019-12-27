@@ -35,7 +35,9 @@ export interface UserDoc {
 }
 
 export interface SlackUserDoc {
+  uid?: string
   displayName: string
+  email: string
   realName: string
   imageOriginal: string
   isAdmin: boolean
@@ -78,6 +80,7 @@ export class FirestoreService {
       return new SlackUser(
         doc.id,
         d.displayName,
+        d.email,
         d.realName,
         d.imageOriginal,
         d.isAdmin,

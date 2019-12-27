@@ -27,7 +27,7 @@ module.exports = {
   settings: {
     'import/resolver': {
       node: {
-        paths: ['src' ],
+        paths: ['src'],
         extensions: ['.js', '.ts', 'd.ts'],
       },
     },
@@ -38,6 +38,7 @@ module.exports = {
     'lines-between-class-members': 'off',
     'no-useless-constructor': 'off',
     'no-unused-expressions': 'warn',
+    'no-console': 'off',
     'no-param-reassign': 'warn',
     'no-empty-function': 'off',
     'no-plusplus': 'off',

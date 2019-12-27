@@ -2,14 +2,11 @@
   <require from="../resources/value-converters/format"></require>
   <require from="../resources/elements/party-list"></require>
 
-  <article id="top">
+  <article id="home">
     <header>
       <h1>Welcome to Quattro Luncher!!</h1>
     </header>
 
-    <button click.delegate="signOut()">
-      Sign Out
-    </button>
 
     <section>
       Latest Lunch Date: ${lunch.lunchDate | format}
@@ -17,5 +14,8 @@
       <party-list parties.bind="lunch.parties"></party-list>
     </section>
 
+    <button click.delegate="signOut()">
+      Sign Out
+    </button>
   </article>
 </template>

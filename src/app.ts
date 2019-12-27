@@ -12,7 +12,6 @@ export const RouteConfigs = {
     name: 'admin',
     moduleId: PLATFORM.moduleName('routes/admin'),
     title: 'Admin',
-    nav: 4,
     settings: {
       icon: 'settings_applications',
       admin: true,
@@ -24,12 +23,12 @@ export const RouteConfigs = {
     moduleId: PLATFORM.moduleName('routes/sign-in'),
     title: 'Sign In'
   },
-  top: {
+  home: {
     route: '',
-    name: 'top',
-    moduleId: PLATFORM.moduleName('routes/top'),
+    name: 'home',
+    moduleId: PLATFORM.moduleName('routes/home'),
     title: 'Home',
-    nav: 1,
+    nav: 2,
     settings: {
       icon: 'home',
     }
@@ -38,14 +37,18 @@ export const RouteConfigs = {
     route: 'parties/new',
     name: 'new-party',
     moduleId: PLATFORM.moduleName('routes/new-party'),
-    title: 'New Lunch Party',
+    title: 'New Party',
+    nav: 1,
+    settings: {
+      icon: 'shuffle'
+    }
   },
   history: {
     route: 'history',
     name: 'history',
     moduleId: PLATFORM.moduleName('routes/history'),
     title: 'History',
-    nav: 3,
+    nav: 4,
     settings: {
       icon: 'history',
     },
@@ -54,8 +57,8 @@ export const RouteConfigs = {
     route: 'upload',
     name: 'upload',
     moduleId: PLATFORM.moduleName('routes/upload'),
-    title: 'Photo',
-    nav: 2,
+    title: 'Upload',
+    nav: 3,
     settings: {
       icon: 'add_a_photo',
     },

@@ -1,6 +1,8 @@
 import { SlackUser } from './slack'
 import { FaceAnnotation } from './cloud-vision'
 
+import admin = require('firebase-admin')
+
 export enum Collection {
   Users = 'users',
   SlackUsers = 'slack-users',
@@ -10,8 +12,10 @@ export enum Collection {
 }
 
 export interface SlackUserDoc {
+  uid?: string
   displayName: string
   realName: string
+  email: string
   imageOriginal: string
   isAdmin: boolean
   isRestricted: boolean
@@ -40,6 +44,7 @@ export class FirestoreService {
       const prof = user.profile
       const doc: SlackUserDoc = {
         displayName: user.profile.display_name || '',
+        email: user.profile.email || '',
         realName: prof.real_name || '',
         imageOriginal: prof.image_original || '',
         isAdmin: user.is_restricted || false,
@@ -61,7 +66,7 @@ export class FirestoreService {
   }
 
   async addPhotoToParty(lunchId: string, partyId: string, photo: PhotoDoc): Promise<void> {
-    const photoRef = await this.store.collection(Collection.Photos).add({ photo })
+    const photoRef = await this.store.collection(Collection.Photos).add(photo)
 
     await this.store
       .collection(Collection.Lunches)
@@ -69,5 +74,21 @@ export class FirestoreService {
       .collection(Collection.Parties)
       .doc(partyId)
       .update({ photo: photoRef })
+  }
+
+  async makeRelationWithSlackUser(userRec: admin.auth.UserRecord): Promise<void> {
+    const snapshot = await this.store
+      .collection(Collection.SlackUsers)
+      .where('email', '==', userRec.email)
+      .get()
+
+    if (snapshot.empty) {
+      return
+    }
+
+    if (snapshot.size !== 1) {
+      console.warn(`${snapshot.size} SlackUserDoc found by ${userRec.email}`)
+    }
+    await snapshot.docs[0].ref.update({ uid: userRec.uid })
   }
 }

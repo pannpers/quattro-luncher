@@ -1,7 +1,10 @@
 import * as functions from 'firebase-functions'
+import * as path from 'path'
+import * as os from 'os'
 import { CloudVision } from './cloud-vision'
-import { SlackService, Channels } from './slack'
+import { SlackService, Channels, SlackUserIds, getOtokoList, SlackOtokoUserIds } from './slack'
 import { FirestoreService, PhotoDoc, Collection, PartyDoc } from './firestore'
+import { InstagramService, HashTagIds, IgUserNames, IgMedia } from './instagram'
 
 import admin = require('firebase-admin')
 
@@ -14,11 +17,16 @@ interface FunctionsConfig {
   slack: {
     token: string
   }
+  instagram: {
+    id: string // instagram_business_account
+    token: string // access_token
+  }
 }
 const config = functions.config() as FunctionsConfig
 admin.initializeApp()
 
 const tokyoRegion = 'asia-northeast1'
+const instagramApiVersion = 'v5.0'
 
 export const calculateSmileScore = functions
   .region(tokyoRegion)
@@ -60,10 +68,38 @@ export const calculateSmileScore = functions
 export const notifySmileScore = functions
   .region(tokyoRegion)
   .firestore.document(`${Collection.Photos}/{photoId}`)
-  .onCreate(async (snapshot, context) => {
-    const data = snapshot.data() as PhotoDoc
-    data.smileScore
+  .onWrite(async (change, context) => {
+    const data = change.after.data() as PhotoDoc
+
+    const fileName = path.basename(data.storagePath)
+    const tmpFilePath = path.join(os.tmpdir(), fileName)
+    try {
+      const bucket = admin.storage().bucket()
+      await bucket.file(data.storagePath).download({ destination: tmpFilePath })
+    } catch (err) {
+      throw new Error(`failed to download ${data.storagePath}: ${err}`)
+    }
+
+    const slack = new SlackService(config.slack.token, Channels.QuattroLunch)
+    await slack.notifySmileScore(tmpFilePath, data.smileScore)
   })
+
+const pickInstagramMedia = async (instagram: InstagramService, slackUserIds: string[]): Promise<IgMedia> => {
+  // find intersection between party members and Otoko
+  const otokos = getOtokoList()
+  const otokoNum = slackUserIds.filter(id => otokos.includes(id)).length
+  if (otokoNum >= 2) {
+    return instagram.pickMediasOf(IgUserNames.BijoZukan)
+  }
+  if (slackUserIds.includes(SlackUserIds.Wara)) {
+    return instagram.pickTopMediaBy(HashTagIds.NihonsyuGenkaSyuzo)
+  }
+  if (slackUserIds.includes(SlackOtokoUserIds.Takkun)) {
+    return instagram.pickTopMediaBy(HashTagIds.HanamaruUdon)
+  }
+
+  return instagram.pickTopMediaBy(HashTagIds.GotandaLunch)
+}
 
 export const notifyNewParties = functions
   .region(tokyoRegion)
@@ -74,23 +110,28 @@ export const notifyNewParties = functions
     const slackUserIds = data.users.map(userRef => userRef.id)
     console.debug('slackUserIds:', slackUserIds)
 
-    const slack = new SlackService(config.slack.token)
-    // return slack.notifyNewParties(Channels.Test, slackUserIds[0], slackUserIds.slice(1))
+    const instagram = new InstagramService(instagramApiVersion, config.instagram.id, config.instagram.token)
+    const media = await pickInstagramMedia(instagram, slackUserIds)
+
+    const slack = new SlackService(config.slack.token, Channels.QuattroLunch)
     try {
-      await slack.notifyNewParties(Channels.Test, 'U135T2Z50', [
-        'UM1BM18QL',
-        'U135T2Z50',
-        'U135T2Z50',
-        'UM1BM18QL',
-      ])
+      await slack.notifyNewParties(slackUserIds, media)
     } catch (err) {
       throw new Error(`failed to notify a new party: ${err}`)
     }
   })
 
+export const makeRelationWithSlackUser = functions
+  .region(tokyoRegion)
+  .auth.user()
+  .onCreate(async user => {
+    const store = new FirestoreService(admin.firestore())
+    await store.makeRelationWithSlackUser(user)
+  })
+
 export const updateSlackUsers = functions.region(tokyoRegion).https.onRequest(async (req, resp) => {
   // Fetch Slack users
-  const slack = new SlackService(config.slack.token)
+  const slack = new SlackService(config.slack.token, Channels.QuattroLunch)
   const slackUsers = await slack.listUsers()
 
   console.info('fetched slack users successfully, len:', slackUsers.length)

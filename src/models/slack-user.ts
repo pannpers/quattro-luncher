@@ -2,9 +2,12 @@ import { computedFrom } from 'aurelia-framework'
 import { SlackUserDoc } from 'services/firebase/firestore'
 
 export class SlackUser {
+  public uid: string
+
   constructor(
     public id: string,
     public displayName: string,
+    public email: string = '',
     public realName: string,
     public imageOriginal: string,
     public isAdmin: boolean,
@@ -18,6 +21,19 @@ export class SlackUser {
   }
 
   static fromObj(id: string, doc: SlackUserDoc): SlackUser {
-    return new SlackUser(id, doc.displayName, doc.realName, doc.imageOriginal, doc.isAdmin, doc.isRestricted, !!doc.isActive)
+    const u = new SlackUser(
+      id,
+      doc.displayName,
+      doc.email,
+      doc.realName,
+      doc.imageOriginal,
+      doc.isAdmin,
+      doc.isRestricted,
+      !!doc.isActive,
+    )
+    if (doc.uid) {
+      u.uid = doc.uid
+    }
+    return u
   }
 }
