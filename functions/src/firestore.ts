@@ -1,3 +1,4 @@
+import { addDays, setHours, startOfHour } from 'date-fns'
 import { SlackUser } from './slack'
 import { FaceAnnotation } from './cloud-vision'
 
@@ -20,6 +21,13 @@ export interface SlackUserDoc {
   isAdmin: boolean
   isRestricted: boolean
   isActive?: boolean
+}
+
+export interface LunchDoc {
+  backNumber: number
+  lunchDate: admin.firestore.Timestamp | Date
+  parties?: PartyDoc[]
+  skipUserIds?: number[]
 }
 
 export interface PartyDoc {
@@ -74,6 +82,41 @@ export class FirestoreService {
       .collection(Collection.Parties)
       .doc(partyId)
       .update({ photo: photoRef })
+  }
+
+  async addNextLunch(): Promise<void> {
+    const lunchRef = this.store.collection(Collection.Lunches)
+
+    const snapshot = await lunchRef
+      .orderBy('lunchDate', 'desc')
+      .limit(1)
+      .get()
+      .catch(err => {
+        console.error(`failed to get latest lunch`, err)
+        throw err
+      })
+
+    if (snapshot.empty) {
+      return
+    }
+    const doc = snapshot.docs[0]
+    const lunchDoc = doc.data() as LunchDoc
+    console.debug('Latest LunchDoc', lunchDoc)
+
+    const today = startOfHour(setHours(new Date(), 13))
+    const nextLunchDate = addDays(today, 6)
+
+    const src: LunchDoc = {
+      backNumber: lunchDoc.backNumber + 1,
+      lunchDate: nextLunchDate,
+    }
+
+    try {
+      await lunchRef.add(src)
+    } catch (err) {
+      console.error(`failed to add next lunch doc`, err)
+      throw err
+    }
   }
 
   async makeRelationWithSlackUser(userRec: admin.auth.UserRecord): Promise<void> {

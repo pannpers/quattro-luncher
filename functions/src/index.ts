@@ -81,6 +81,7 @@ export const notifySmileScore = functions
     }
 
     const slack = new SlackService(config.slack.token, Channels.QuattroLunch)
+    // const slack = new SlackService(config.slack.token, Channels.Test)
     await slack.notifySmileScore(tmpFilePath, data.smileScore)
   })
 
@@ -127,6 +128,16 @@ export const makeRelationWithSlackUser = functions
   .onCreate(async user => {
     const store = new FirestoreService(admin.firestore())
     await store.makeRelationWithSlackUser(user)
+  })
+
+// https://firebase.google.com/docs/functions/schedule-functions
+export const createNextLunchDoc = functions
+  .region(tokyoRegion)
+  .pubsub.schedule('0 0 * * 5') // https://en.wikipedia.org/wiki/Cron#Overview
+  .timeZone('Asia/Tokyo') // https://en.wikipedia.org/wiki/Tz_database
+  .onRun(async context => {
+    const store = new FirestoreService(admin.firestore())
+    await store.addNextLunch()
   })
 
 export const updateSlackUsers = functions.region(tokyoRegion).https.onRequest(async (req, resp) => {
