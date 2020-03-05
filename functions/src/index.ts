@@ -140,18 +140,20 @@ export const createNextLunchDoc = functions
     await store.addNextLunch()
   })
 
-export const updateSlackUsers = functions.region(tokyoRegion).https.onRequest(async (req, resp) => {
-  // Fetch Slack users
-  const slack = new SlackService(config.slack.token, Channels.QuattroLunch)
-  const slackUsers = await slack.listUsers()
+export const updateSlackUsers = functions
+  .region(tokyoRegion)
+  .pubsub.schedule('0 8 * * *') // https://en.wikipedia.org/wiki/Cron#Overview
+  .timeZone('Asia/Tokyo') // https://en.wikipedia.org/wiki/Tz_database
+  .onRun(async context => {
+    // Fetch Slack users
+    const slack = new SlackService(config.slack.token, Channels.QuattroLunch)
+    const slackUsers = await slack.listUsers()
 
-  console.info('fetched slack users successfully, len:', slackUsers.length)
+    console.info('fetched slack users successfully, len:', slackUsers.length)
 
-  const store = new FirestoreService(admin.firestore())
-  await store.updateSlackUsers(slackUsers)
-
-  resp.send('ok')
-})
+    const store = new FirestoreService(admin.firestore())
+    await store.updateSlackUsers(slackUsers)
+  })
 
 export const updateUserClaims = functions.region(tokyoRegion).https.onRequest(async (req, resp) => {
   const { uid } = req.body

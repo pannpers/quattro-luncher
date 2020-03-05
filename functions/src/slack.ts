@@ -155,7 +155,7 @@ export class SlackService {
       channel: this.channel,
       attachments: [attachment],
       blocks,
-      as_user: true,
+      as_user: false,
     }
     console.debug('request', JSON.stringify(body))
 
