@@ -133,7 +133,7 @@ export class SlackService {
     const members = slackUserIds.slice(1)
     const attachment: Attachment = {
       color: this.getRandomColor(),
-      pretext: media.permalink,
+      // pretext: media.permalink,
       title: `Leader: <@${slackUserIds[0]}>`,
       text: `${members.map(id => `<@${id}>`).join(', ')}`,
     }
@@ -151,10 +151,12 @@ export class SlackService {
         },
       },
     ]
+    console.debug('this blocks is not used', blocks)
+
     const body = {
       channel: this.channel,
       attachments: [attachment],
-      blocks,
+      // blocks,
       as_user: false,
     }
     console.debug('request', JSON.stringify(body))
