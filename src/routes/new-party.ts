@@ -11,6 +11,7 @@ import { AuthService } from 'services/firebase/auth'
 @autoinject
 export class NewParty {
   private readonly logger = getLogger(NewParty.name)
+  private readonly numOfMembers = 8
 
   lunch: Lunch | null = null
   slackUsers: SlackUser[] = []
@@ -43,15 +44,15 @@ export class NewParty {
   }
 
   generateParties(): void {
-    const partyLen = Math.floor(this.slackUsers.length / 4) || 1
-    const restLen = this.slackUsers.length % 4
+    const partyLen = Math.floor(this.slackUsers.length / this.numOfMembers) || 1
+    const remainder = this.slackUsers.length % this.numOfMembers
 
     const randomized = [...this.slackUsers].sort(() => Math.random() - 0.5)
     const parties: Party[] = []
 
     for (let i = 0; i < partyLen; i++) {
       const party = new Party()
-      const userLen = i < restLen ? 5 : 4
+      const userLen = i < remainder ? this.numOfMembers + 1 : this.numOfMembers
       party.users = randomized.splice(0, userLen)
 
       parties[i] = party
